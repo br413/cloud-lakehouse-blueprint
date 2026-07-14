@@ -1,0 +1,31 @@
+roles:
+  data_engineer:
+    description: Build and maintain pipeline infrastructure
+    layers: [bronze, silver, gold]
+    permissions: [read, write, deploy]
+
+  analytics_engineer:
+    description: Transform silver and gold datasets
+    layers: [silver, gold]
+    permissions: [read, write]
+
+  analyst:
+    description: Read-only access to curated gold datasets
+    layers: [gold]
+    permissions: [read]
+
+  auditor:
+    description: Read-only lineage and metadata access
+    layers: [bronze, silver, gold]
+    permissions: [read, lineage]
+
+policies:
+  - name: deny_bronze_to_analyst
+    deny:
+      role: analyst
+      layer: bronze
+  - name: deny_gold_write_to_analyst
+    deny:
+      role: analyst
+      layer: gold
+      permission: write

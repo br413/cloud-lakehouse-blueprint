@@ -1,0 +1,40 @@
+name: retail-lakehouse
+version: "1.0"
+description: Medallion lakehouse for retail order analytics
+
+layers:
+  bronze:
+    description: Raw landing from operational systems
+    format: parquet
+    retention_days: 90
+    tables:
+      - name: raw_orders
+        source: orders_api
+        columns: [order_id, customer_id, order_total, status, updated_at]
+      - name: raw_customers
+        source: crm_export
+        columns: [customer_id, full_name, region]
+
+  silver:
+    description: Cleaned, conformed entities
+    format: delta
+    retention_days: 365
+    tables:
+      - name: stg_orders
+        upstream: bronze.raw_orders
+        columns: [order_id, customer_id, order_total, status, updated_at]
+      - name: dim_customers
+        upstream: bronze.raw_customers
+        columns: [customer_id, full_name, region]
+
+  gold:
+    description: Business-ready aggregates
+    format: delta
+    retention_days: 730
+    tables:
+      - name: fct_daily_orders
+        upstream: silver.stg_orders
+        columns: [order_date, order_count, revenue_total]
+      - name: rpt_customer_summary
+        upstream: silver.dim_customers
+        columns: [region, customer_count]

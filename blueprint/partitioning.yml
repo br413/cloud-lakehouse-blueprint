@@ -1,0 +1,25 @@
+tables:
+  bronze.raw_orders:
+    strategy: date
+    columns: [updated_at]
+    granularity: day
+  bronze.raw_customers:
+    strategy: region
+    columns: [region]
+    granularity: value
+  silver.stg_orders:
+    strategy: date
+    columns: [updated_at]
+    granularity: day
+  silver.dim_customers:
+    strategy: region
+    columns: [region]
+    granularity: value
+  gold.fct_daily_orders:
+    strategy: date
+    columns: [order_date]
+    granularity: day
+  gold.rpt_customer_summary:
+    strategy: region
+    columns: [region]
+    granularity: value

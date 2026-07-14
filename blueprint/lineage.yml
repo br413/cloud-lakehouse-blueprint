@@ -1,0 +1,50 @@
+nodes:
+  - id: orders_api
+    type: source
+  - id: crm_export
+    type: source
+  - id: bronze.raw_orders
+    type: table
+    layer: bronze
+  - id: bronze.raw_customers
+    type: table
+    layer: bronze
+  - id: silver.stg_orders
+    type: table
+    layer: silver
+  - id: silver.dim_customers
+    type: table
+    layer: silver
+  - id: gold.fct_daily_orders
+    type: table
+    layer: gold
+  - id: gold.rpt_customer_summary
+    type: table
+    layer: gold
+  - id: bi_dashboard
+    type: consumer
+
+edges:
+  - from: orders_api
+    to: bronze.raw_orders
+  - from: crm_export
+    to: bronze.raw_customers
+  - from: bronze.raw_orders
+    to: silver.stg_orders
+  - from: bronze.raw_customers
+    to: silver.dim_customers
+  - from: silver.stg_orders
+    to: gold.fct_daily_orders
+  - from: silver.dim_customers
+    to: gold.rpt_customer_summary
+  - from: gold.fct_daily_orders
+    to: bi_dashboard
+  - from: gold.rpt_customer_summary
+    to: bi_dashboard
+
+governance:
+  owner: data-platform
+  classification: internal
+  pii_columns:
+    silver.dim_customers: [full_name]
+  retention_policy: align_with_layer_defaults

@@ -1,0 +1,20 @@
+environments:
+  dev:
+    monthly_storage_gb: 120
+    daily_compute_dbus: 8
+    query_concurrency: 4
+  prod:
+    monthly_storage_gb: 2400
+    daily_compute_dbus: 64
+    query_concurrency: 24
+
+assumptions:
+  storage_cost_per_gb_month: 0.023
+  compute_cost_per_dbu: 0.15
+  partition_pruning_savings_pct: 35
+  z_order_savings_pct: 15
+
+targets:
+  gold_query_p95_seconds: 5
+  silver_refresh_sla_minutes: 30
+  bronze_landing_lag_minutes: 10
