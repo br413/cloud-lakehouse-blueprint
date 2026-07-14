@@ -21,7 +21,12 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--blueprint-dir", type=Path, default=Path("blueprint"))
     subparsers = parser.add_subparsers(dest="command", required=True)
 
-    subparsers.add_parser("validate", help="Validate blueprint manifests")
+    validate_parser = subparsers.add_parser("validate", help="Validate blueprint manifests")
+    validate_parser.add_argument(
+        "--json",
+        action="store_true",
+        help="Emit validation issues as JSON for CI pipelines",
+    )
     subparsers.add_parser("plan", help="Render deployment and rollback plans")
 
     cost_parser = subparsers.add_parser("cost", help="Estimate storage and compute costs")
@@ -43,8 +48,11 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "validate":
         issues = validate_blueprint(blueprint_dir)
-        for issue in issues:
-            print(f"{issue.severity.upper():7} {issue.code}: {issue.message}")
+        if args.json:
+            print(json.dumps([issue.__dict__ for issue in issues], indent=2))
+        else:
+            for issue in issues:
+                print(f"{issue.severity.upper():7} {issue.code}: {issue.message}")
         return 1 if any(issue.severity == "error" for issue in issues) else 0
 
     if args.command == "plan":
