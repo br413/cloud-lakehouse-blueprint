@@ -1,12 +1,15 @@
 # Changelog
 
+All notable changes to this project are documented here.
+
 ## [0.1.0] - 2026-07-14
 
 ### Added
 
-- Medallion lakehouse blueprint manifests (bronze/silver/gold)
-- Partitioning, access, lineage, and cost configuration
-- Python CLI for validation, planning, cost, and lineage
-- Terraform modules for storage, IAM, and catalog
+- Bronze/silver/gold manifest with table lineage metadata
+- Partitioning strategy definitions with DDL rendering CLI
+- Layer-scoped IAM role blueprint and policy validation
+- Cost and performance estimation model
 - Deployment and rollback plan generation
-- Documentation and CI with pytest + terraform validate
+- Terraform modules for AWS storage, IAM, and Glue catalog
+- pytest validation suite and GitHub Actions CI with `terraform validate`

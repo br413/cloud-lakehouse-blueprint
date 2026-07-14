@@ -35,6 +35,7 @@ See [`docs/architecture.md`](docs/architecture.md) for layer boundaries and gove
 - [x] Deployment and rollback plan generation
 - [x] Terraform modules for storage, IAM, and catalog
 - [x] pytest validation suite and GitHub Actions CI
+- [x] `validate --json` output for CI and automation pipelines
 - [ ] Live cloud deployment (Terraform validate only in CI)
 
 ## Technology
