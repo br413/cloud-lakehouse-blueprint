@@ -5,6 +5,7 @@
 - Terraform >= 1.5
 - AWS credentials with permission to create S3, IAM, and Glue resources
 - Validated blueprint: `python -m src.lakehouse.cli validate`
+- CI-friendly JSON output: `python -m src.lakehouse.cli validate --json`
 
 ## Deployment sequence
 
