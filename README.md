@@ -128,6 +128,7 @@ cd terraform && terraform init -backend=false && terraform validate
 | Concern | Approach |
 |---------|----------|
 | Deployment | [`docs/deployment.md`](docs/deployment.md) |
+| Day-2 ops | [`docs/operations.md`](docs/operations.md) |
 | Rollback | Reverse-order plan from CLI `plan` |
 | Access | Layer-scoped IAM roles |
 | Cost | [`docs/cost-performance.md`](docs/cost-performance.md) |
