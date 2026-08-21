@@ -134,6 +134,18 @@ cd terraform && terraform init -backend=false && terraform validate
 | Cost | [`docs/cost-performance.md`](docs/cost-performance.md) |
 | Governance | [`docs/governance.md`](docs/governance.md) |
 
+## Platform stack demo
+
+This repo defines **governance and IaC** for the medallion layers that companion projects implement:
+
+| Layer | Runnable project |
+|-------|------------------|
+| Ingest + transform | [production-data-pipeline](https://github.com/br413/production-data-pipeline) |
+| Quality contracts | [data-quality-observability](https://github.com/br413/data-quality-observability) |
+| Runnable lakehouse | [lakehouse-platform-starter](https://github.com/br413/lakehouse-platform-starter) |
+
+Suggested flow: validate manifests here (`python -m src.lakehouse.cli validate`), then explore ingestion + contract checks in the pipeline and quality repos.
+
 ## Related projects
 
 | Project | Focus |
