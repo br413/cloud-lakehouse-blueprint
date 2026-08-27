@@ -154,6 +154,15 @@ Suggested flow: validate manifests here (`python -m src.lakehouse.cli validate`)
 | [**data-quality-observability**](https://github.com/br413/data-quality-observability) | Contract-driven data quality checks with history and alerts |
 | [**@br413**](https://github.com/br413) | Senior Data Engineer & Data Architect portfolio |
 
+## Writing
+
+| Article | Topic |
+|---------|-------|
+| [Building a Production Data Pipeline with Incremental Loading and dbt](https://dev.to/bobby_ray_581732c715283b2/building-a-production-data-pipeline-with-incremental-loading-and-dbt-2e2c) | Incremental ingestion, medallion layering, Airflow orchestration |
+| [Data Quality Contracts in Production Pipelines](https://dev.to/bobby_ray_581732c715283b2/data-quality-contracts-in-production-pipelines-without-a-separate-platform-team-f3) | Quarantine, YAML contracts, alert routing |
+| [What I Learned Contributing to Prefect, dbt, and Airflow](https://dev.to/bobby_ray_581732c715283b2/what-i-learned-contributing-to-prefect-dbt-and-airflow-an-honest-oss-retrospective-1ki8) | Honest OSS retrospective — upstream merges and building in public |
+| [Contract Versioning in Production Pipelines](https://dev.to/bobby_ray_581732c715283b2/contract-versioning-in-production-pipelines-registry-cli-and-run-history-13el) | Registry, CLI, run history — platform governance context |
+
 ## Topics
 
 `lakehouse` · `data-architecture` · `medallion-architecture` · `terraform` · `data-engineering` · `data-platform` · `aws` · `bronze-silver-gold` · `lineage` · `governance` · `infrastructure-as-code`
