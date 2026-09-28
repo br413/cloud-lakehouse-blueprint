@@ -1,158 +1,114 @@
 # Cloud Lakehouse Blueprint
 
-> **Medallion lakehouse architecture blueprint** with YAML manifests, Terraform infrastructure-as-code, IAM governance, lineage tracking, and CI validation — a reference for data architects designing cloud data platforms on AWS.
+**Validate a bronze → silver → gold lakehouse before you touch AWS.**
+
+YAML manifests for storage, IAM, lineage, and cost — plus Terraform modules and a Python CLI that plans deploy/rollback in CI. No cloud credentials required to review the design.
 
 [![CI](https://github.com/br413/cloud-lakehouse-blueprint/actions/workflows/ci.yml/badge.svg)](https://github.com/br413/cloud-lakehouse-blueprint/actions/workflows/ci.yml)
-[![Python 3.12](https://img.shields.io/badge/python-3.12-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
-[![Terraform](https://img.shields.io/badge/Terraform-IaC-844FBA?style=flat-square&logo=terraform&logoColor=white)](https://www.terraform.io/)
-[![AWS](https://img.shields.io/badge/AWS-S3%20%7C%20IAM%20%7C%20Glue-232F3E?style=flat-square&logo=amazonaws&logoColor=white)](https://aws.amazon.com/)
-[![License: MIT](https://img.shields.io/badge/license-MIT-green?style=flat-square)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/downloads/)
+[![Terraform AWS](https://img.shields.io/badge/Terraform-AWS-844FBA.svg)](terraform/)
 
-A **data architecture** portfolio project demonstrating how to define bronze/silver/gold lakehouse layers, access controls, partitioning, lineage, and cost models as reviewable code — before deploying to production cloud infrastructure.
+⭐ If this blueprint helps you design a medallion lakehouse, [star the repo](https://github.com/br413/cloud-lakehouse-blueprint) so others can find it.
 
-## Why this project exists
+## Who this is for
 
-Teams adopt lakehouses faster when storage, access, partitioning, lineage, and deployment plans are defined together—not as scattered wiki pages. This repository demonstrates a reviewable blueprint you can validate in CI before touching production cloud resources.
+- **Data engineers** designing a medallion (bronze → silver → gold) architecture on AWS
+- **Platform teams** who want IaC and governance reviewed before any `terraform apply`
+- **Hiring managers** evaluating architecture judgment, CI discipline, and portfolio depth
 
-**Ideal for:** data architects planning medallion architectures, platform engineers evaluating Terraform lakehouse modules, and teams migrating from data warehouses to lakehouse patterns.
+## What you get
+
+| Capability | What it covers |
+|------------|----------------|
+| Manifest-driven design | YAML for layers, partitioning, access, lineage, and cost |
+| Planning CLI | `validate` / `plan` / `cost` / `lineage` / `ddl` — no AWS credentials |
+| Terraform modules | S3 storage, IAM roles, Glue catalog — **validate-only** in CI |
+| Medallion SQL | Bronze/silver/gold DDL examples under `sql/` |
+| CI | pytest + `terraform validate` on every push |
+
+**Intentionally out of scope:** live `terraform apply` against a real AWS account.
 
 ## Architecture
 
 ```text
-Blueprint manifests (YAML)
-    ↓
-Validation + planning CLI
-    ↓
-Terraform modules
-    ├── storage (bronze/silver/gold)
-    ├── iam (layer-scoped roles)
-    └── catalog (governed metadata)
-    ↓
-Medallion SQL assets
-    ↓
-Analytics consumers
+manifests (blueprint/*.yml)
+        │
+        ▼
+validate / plan CLI (src/lakehouse)
+        │
+        ▼
+CI (pytest + terraform validate)
+        │
+        ▼
+terraform/  →  storage · iam · catalog
+        │
+        ▼
+medallion SQL (sql/)
 ```
 
-See [`docs/architecture.md`](docs/architecture.md) for layer boundaries and governance model.
+Data flow example:
 
-## Current capabilities
+```text
+orders_api → bronze.raw_orders → silver.stg_orders → gold.fct_daily_orders
+```
 
-- [x] Bronze/silver/gold manifest with table lineage
-- [x] Partitioning strategy per table with DDL rendering
-- [x] Role-based access controls with policy validation
-- [x] Lineage graph and governance metadata
-- [x] Cost and performance estimation model
-- [x] Deployment and rollback plan generation
-- [x] Terraform modules for storage, IAM, and catalog
-- [x] pytest validation suite and GitHub Actions CI
-- [x] `validate --json` output for CI and automation pipelines
-- [ ] Live cloud deployment (Terraform validate only in CI)
+Details: [`docs/architecture.md`](docs/architecture.md).
 
-## Technology stack
-
-| Area | Selection |
-|------|-----------|
-| Blueprint | YAML manifests |
-| IaC | Terraform (AWS S3, IAM, Glue) |
-| Tooling | Python 3.12 CLI |
-| SQL | Medallion layer DDL examples |
-| Testing | pytest + `terraform validate` |
-| Governance | Lineage + PII classification metadata |
-
-## Quick start
+## 60-second demo
 
 ```bash
 git clone https://github.com/br413/cloud-lakehouse-blueprint.git
 cd cloud-lakehouse-blueprint
 python -m venv .venv
-```
-
-Windows:
-
-```powershell
-.\.venv\Scripts\Activate.ps1
+source .venv/bin/activate   # Windows: .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
-pytest
+pytest -q
 python -m src.lakehouse.cli validate
 python -m src.lakehouse.cli plan
 ```
 
-Linux/macOS:
-
-```bash
-source .venv/bin/activate
-pip install -r requirements.txt
-pytest
-python -m src.lakehouse.cli validate
-python -m src.lakehouse.cli plan
-```
-
-Run the demo script (Windows):
-
-```powershell
-.\scripts\run_demo.ps1
-```
-
-Validate with JSON output for CI pipelines:
-
-```bash
-python -m src.lakehouse.cli validate --json
-```
-
-## Project structure
+Sample `plan` output:
 
 ```text
-.
-├── blueprint/           # lakehouse, partitioning, access, lineage, cost
-├── terraform/           # storage, iam, catalog modules
-├── sql/                 # medallion DDL examples
-├── src/lakehouse/       # validation and planning CLI
-├── docs/
-├── tests/
-└── scripts/
+Deployment plan:
+  1. terraform apply storage module -> bronze/silver/gold buckets
+  2. terraform apply iam module -> layer-scoped roles
+  3. terraform apply catalog module -> glue database and layer tables
+  4. create bronze table -> bronze.raw_orders
+  ...
+  10. validate lineage and access policies -> retail-lakehouse
+
+Rollback plan:
+  10. revert blueprint commit and re-run validation (retail-lakehouse)
+  ...
+  1. terraform destroy -target=module.storage (bronze/silver/gold buckets)
+```
+
+Windows one-shot: [`scripts/run_demo.ps1`](scripts/run_demo.ps1).
+
+## Project layout
+
+```text
+blueprint/          # YAML manifests (layers, access, lineage, cost, partitioning)
+terraform/          # S3 / IAM / Glue modules (validate-only in CI)
+sql/                # Medallion DDL examples
+src/lakehouse/      # Validation and planning CLI
+docs/               # Architecture, ops, ADRs
+tests/              # pytest suite
 ```
 
 ## Engineering decisions
 
-Architectural Decision Records are stored in [`docs/adr/`](docs/adr/).
-
-## Testing
-
-```bash
-pytest -v
-cd terraform && terraform init -backend=false && terraform validate
-```
-
-## Operations
-
-| Concern | Approach |
-|---------|----------|
-| Deployment | [`docs/deployment.md`](docs/deployment.md) |
-| Day-2 ops | [`docs/operations.md`](docs/operations.md) |
-| Rollback | Reverse-order plan from CLI `plan` |
-| Access | Layer-scoped IAM roles |
-| Cost | [`docs/cost-performance.md`](docs/cost-performance.md) |
-| Governance | [`docs/governance.md`](docs/governance.md) |
-
-## Platform stack demo
-
-This repo defines **governance and IaC** for the medallion layers that companion projects implement:
-
-| Layer | Runnable project |
-|-------|------------------|
-| Ingest + transform | [production-data-pipeline](https://github.com/br413/production-data-pipeline) |
-| Quality contracts | [data-quality-observability](https://github.com/br413/data-quality-observability) |
-| Runnable lakehouse | [lakehouse-platform-starter](https://github.com/br413/lakehouse-platform-starter) |
-
-Suggested flow: validate manifests here (`python -m src.lakehouse.cli validate`), then explore ingestion + contract checks in the pipeline and quality repos.
+Architectural Decision Records live in [`docs/adr/`](docs/adr/). Start with [`0001-manifest-driven-lakehouse.md`](docs/adr/0001-manifest-driven-lakehouse.md).
 
 ## Related projects
 
 | Project | Focus |
 |---------|-------|
-| [**production-data-pipeline**](https://github.com/br413/production-data-pipeline) | Incremental API ingestion with dbt and Airflow |
-| [**data-quality-observability**](https://github.com/br413/data-quality-observability) | Contract-driven data quality checks with history and alerts |
-| [**@br413**](https://github.com/br413) | Senior Data Engineer & Data Architect portfolio |
+| [production-data-pipeline](https://github.com/br413/production-data-pipeline) | Incremental API ingestion with dbt and Airflow |
+| [data-quality-observability](https://github.com/br413/data-quality-observability) | Contract-driven data quality checks with history and alerts |
+| [Portfolio](https://br413.github.io) | Senior Data Engineer & Data Architect |
 
 ## Writing
 
@@ -163,14 +119,8 @@ Suggested flow: validate manifests here (`python -m src.lakehouse.cli validate`)
 | [What I Learned Contributing to Prefect, dbt, and Airflow](https://dev.to/bobby_ray_581732c715283b2/what-i-learned-contributing-to-prefect-dbt-and-airflow-an-honest-oss-retrospective-1ki8) | Honest OSS retrospective — upstream merges and building in public |
 | [Contract Versioning in Production Pipelines](https://dev.to/bobby_ray_581732c715283b2/contract-versioning-in-production-pipelines-registry-cli-and-run-history-13el) | Registry, CLI, run history — platform governance context |
 
-## Topics
-
-`lakehouse` · `data-architecture` · `medallion-architecture` · `terraform` · `data-engineering` · `data-platform` · `aws` · `bronze-silver-gold` · `lineage` · `governance` · `infrastructure-as-code`
-
-## Attribution
-
-Built as a public portfolio project by [@br413](https://github.com/br413) — Senior Data Engineer & Data Architect. Terraform targets AWS primitives as a reference implementation; adapt modules for your cloud provider.
-
 ## License
 
 MIT — see [LICENSE](LICENSE).
+
+Built by [@br413](https://github.com/br413).
