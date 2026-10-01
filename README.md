@@ -114,10 +114,10 @@ Architectural Decision Records live in [`docs/adr/`](docs/adr/). Start with [`00
 
 | Article | Topic |
 |---------|-------|
-| [Building a Production Data Pipeline with Incremental Loading and dbt](https://dev.to/bobby_ray_581732c715283b2/building-a-production-data-pipeline-with-incremental-loading-and-dbt-2e2c) | Incremental ingestion, medallion layering, Airflow orchestration |
-| [Data Quality Contracts in Production Pipelines](https://dev.to/bobby_ray_581732c715283b2/data-quality-contracts-in-production-pipelines-without-a-separate-platform-team-f3) | Quarantine, YAML contracts, alert routing |
-| [What I Learned Contributing to Prefect, dbt, and Airflow](https://dev.to/bobby_ray_581732c715283b2/what-i-learned-contributing-to-prefect-dbt-and-airflow-an-honest-oss-retrospective-1ki8) | Honest OSS retrospective — upstream merges and building in public |
-| [Contract Versioning in Production Pipelines](https://dev.to/bobby_ray_581732c715283b2/contract-versioning-in-production-pipelines-registry-cli-and-run-history-13el) | Registry, CLI, run history — platform governance context |
+| [Building a Production Data Pipeline with Incremental Loading and dbt](https://github.com/br413/br413.github.io/blob/main/articles/building-production-data-pipeline.md) | Incremental ingestion, medallion layering, Airflow orchestration |
+| [Data Quality Contracts in Production Pipelines](https://github.com/br413/br413.github.io/blob/main/articles/data-quality-contracts-production-pipelines.md) | Quarantine, YAML contracts, alert routing |
+| [What I Learned Contributing to Prefect, dbt, and Airflow](https://github.com/br413/br413.github.io/blob/main/articles/oss-upstream-retrospective.md) | Honest OSS retrospective — upstream merges and building in public |
+| [Contract Versioning in Production Pipelines](https://github.com/br413/br413.github.io/blob/main/articles/contract-versioning-production-pipelines.md) | Registry, CLI, run history — platform governance context |
 
 ## License
 
